@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google Prep · Linear Algebra · Week 1 · Flashcards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-paper: #fbf8f1;
+    --bg-deep: #ebe6da;
+    --ink: #1a1612;
+    --ink-soft: #4a4138;
+    --ink-mute: #7a6f60;
+    --rule: #c9bfa9;
+    --rule-soft: #ddd4be;
+    --accent: #b8341d;        /* deep vermilion */
+    --accent-2: #2c5530;      /* forest */
+    --accent-3: #c89211;      /* ochre */
+    --shadow: 0 1px 2px rgba(26,22,18,0.06), 0 8px 24px rgba(26,22,18,0.08);
+
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Inter Tight', -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.7;
+    font-feature-settings: "ss01", "ss02", "kern", "liga";
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(184,52,29,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 90%, rgba(44,85,48,0.04) 0%, transparent 50%);
+  }
+
+  /* === Layout === */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+  }
+
+  /* === Sidebar === */
+  .sidebar {
+    background: var(--bg-paper);
+    border-right: 1px solid var(--rule);
+    padding: 2rem 1.5rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    font-family: var(--sans);
+  }
+
+  .brand {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .brand-mark {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-style: italic;
+  }
+  .brand-sub {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-top: 0.5rem;
+  }
+
+  .nav-section {
+    margin-bottom: 1.75rem;
+  }
+  .nav-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    margin-bottom: 0.6rem;
+  }
+  .nav-list { list-style: none; }
+  .nav-list li {
+    padding: 0.35rem 0;
+    font-size: 0.85rem;
+    border-bottom: 1px dotted var(--rule-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-list a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    flex: 1;
+  }
+  .nav-list a:hover { color: var(--accent); }
+  .nav-list a.active { color: var(--accent); font-weight: 600; }
+  .week-status {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--ink-mute);
+  }
+  .week-status.done { color: var(--accent-2); }
+  .week-status.locked { opacity: 0.4; }
+
+  /* Companion link — back to notes */
+  .companion-link {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    background: var(--ink);
+    color: var(--bg-paper);
+    padding: 0.9rem 1rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .companion-link::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--accent-2) 0%, var(--accent-3) 50%, var(--accent) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+  }
+  .companion-link:hover::before { opacity: 1; }
+  .companion-link > * { position: relative; z-index: 1; }
+  .companion-icon {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    color: var(--accent-3);
+    line-height: 1;
+    font-weight: 400;
+  }
+  .companion-link:hover .companion-icon { color: var(--bg-paper); }
+  .companion-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .companion-text strong {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--bg-paper);
+    letter-spacing: -0.01em;
+  }
+  .companion-text em {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rule);
+  }
+  .companion-link:hover .companion-text em { color: var(--bg-paper); opacity: 0.9; }
+  .companion-arrow {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    color: var(--bg-paper);
+    transition: transform 0.2s;
+  }
+  .companion-link:hover.reverse .companion-arrow { transform: translateX(-4px); }
+  .companion-link:hover:not(.reverse) .companion-arrow { transform: translateX(4px); }
+
+  /* Deck nav in sidebar — clickable list */
+  .deck-nav-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.6rem;
+    margin: 0 -0.6rem;
+    font-size: 0.85rem;
+    border-radius: 2px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    transition: all 0.15s;
+    border-bottom: 1px dotted var(--rule-soft);
+  }
+  .deck-nav-item:hover { background: var(--bg-deep); color: var(--ink); }
+  .deck-nav-item.active {
+    background: var(--ink);
+    color: var(--bg-paper);
+    font-weight: 600;
+  }
+  .deck-nav-item.active .deck-nav-count {
+    background: var(--bg-paper);
+    color: var(--ink);
+  }
+  .deck-nav-name { flex: 1; }
+  .deck-nav-count {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: var(--bg-deep);
+    color: var(--ink-mute);
+    padding: 0.1rem 0.45rem;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  /* Keyboard hints */
+  .kbd-hints {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dotted var(--rule);
+  }
+  .kbd-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.4rem 0;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+  }
+  .kbd-row span {
+    margin-left: 0.25rem;
+    font-family: var(--sans);
+    color: var(--ink-mute);
+  }
+  kbd {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+    color: var(--ink);
+    min-width: 1.5rem;
+    text-align: center;
+    display: inline-block;
+  }
+
+  .progress-card {
+    background: var(--bg-deep);
+    border: 1px solid var(--rule);
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+  .progress-card h4 {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 0.5rem;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--rule-soft);
+    margin: 0.5rem 0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+  .progress-text {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+  }
+
+  /* === Main === */
+  .main {
+    padding: 3rem 4rem 6rem;
+    max-width: 980px;
+  }
+
+  /* Hero / Header */
+  .hero {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2.5rem;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  .hero-meta {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .hero-meta span:not(:last-child)::after {
+    content: "·";
+    margin-left: 1.5rem;
+    color: var(--ink-mute);
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    font-style: italic;
+    margin-bottom: 1rem;
+  }
+  h1 .accent {
+    font-style: normal;
+    font-weight: 400;
+    color: var(--accent);
+    display: block;
+    font-size: 0.55em;
+    letter-spacing: -0.01em;
+    margin-top: 0.5rem;
+  }
+
+  .lede {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 65ch;
+    font-weight: 400;
+  }
+  .lede::first-letter {
+    font-weight: 700;
+    font-size: 1.3em;
+  }
+
+  /* Section structure */
+  section.module {
+    margin: 4rem 0;
+    scroll-margin-top: 2rem;
+  }
+
+  .module-num {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 0.75rem;
+  }
+
+  h3 {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 2rem 0 0.75rem;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  h3::before {
+    content: "§ ";
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  h4 {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    margin: 1.5rem 0 0.5rem;
+    font-weight: 600;
+  }
+
+  p { margin-bottom: 1rem; max-width: 70ch; }
+
+  /* Inline elements */
+  strong { color: var(--ink); font-weight: 600; }
+  em { font-style: italic; color: var(--accent-2); }
+
+  code, .mono {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    background: var(--bg-deep);
+    padding: 0.1em 0.4em;
+    border-radius: 2px;
+    color: var(--ink);
+  }
+
+  /* Special boxes */
+  .definition {
+    background: var(--bg-paper);
+    border-left: 4px solid var(--accent);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .definition::before {
+    content: "Definition";
+    position: absolute;
+    top: -10px;
+    left: 1rem;
+    background: var(--accent);
+    color: var(--bg-paper);
+    padding: 0.15rem 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .intuition {
+    background: rgba(44,85,48,0.06);
+    border-left: 4px solid var(--accent-2);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  .intuition::before {
+    content: "Intuition";
+    position: absolute;
+    top: -10px;
+    left: 1rem;
+    background: var(--accent-2);
+    color: var(--bg-paper);
+    padding: 0.15rem 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .ml-link {
+    background: rgba(200,146,17,0.08);
+    border: 1px dashed var(--accent-3);
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    position: relative;
+  }
+  .ml-link::before {
+    content: "✦ ML Connection";
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-3);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .example {
+    background: var(--bg-paper);
+    border: 1px solid var(--rule);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .example-title {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .pitfall {
+    background: rgba(184,52,29,0.05);
+    border-left: 4px solid var(--accent);
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+  }
+  .pitfall::before {
+    content: "⚠ Common Pitfall";
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  /* Lists */
+  ul, ol {
+    margin: 1rem 0 1rem 1.5rem;
+    max-width: 65ch;
+  }
+  li { margin-bottom: 0.4rem; }
+  ul li::marker { color: var(--accent); }
+
+  /* SVG figures */
+  figure {
+    margin: 2rem auto;
+    text-align: center;
+  }
+  figure svg {
+    max-width: 100%;
+    height: auto;
+    background: var(--bg-paper);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+    display: block;
+    margin: 0 auto;
+  }
+  figcaption {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    color: var(--ink-mute);
+    margin-top: 0.75rem;
+    font-style: italic;
+  }
+  figcaption .fig-num {
+    font-family: var(--mono);
+    font-style: normal;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.75rem;
+    margin-right: 0.5rem;
+  }
+
+  /* Math display */
+  mjx-container {
+    font-size: 1.05em !important;
+  }
+  mjx-container[display="true"] {
+    margin: 1.25rem 0 !important;
+  }
+
+  /* === Anki cards === */
+  .anki-section {
+    margin: 3rem 0 0;
+    padding: 0;
+    border-top: 4px double var(--ink);
+    padding-top: 3rem;
+  }
+
+  .anki-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .anki-title {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: -0.02em;
+  }
+  .anki-controls {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .anki-btn {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .anki-btn:hover {
+    background: var(--ink);
+    color: var(--bg-paper);
+  }
+  .anki-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-paper);
+  }
+  .anki-btn.primary:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .anki-stats {
+    display: flex;
+    gap: 2rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-deep);
+    border: 1px solid var(--rule);
+  }
+  .stat-block { display: flex; flex-direction: column; }
+  .stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 0.15rem;
+  }
+
+  .deck-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--rule);
+  }
+  .deck-tab {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    color: var(--ink-mute);
+    transition: all 0.2s;
+  }
+  .deck-tab:hover { color: var(--ink); }
+  .deck-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 700;
+  }
+  .deck-tab .count {
+    background: var(--bg-deep);
+    padding: 0.1rem 0.4rem;
+    margin-left: 0.4rem;
+    border-radius: 2px;
+    font-size: 0.7rem;
+  }
+
+  .flashcard {
+    background: var(--bg-paper);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+    padding: 0;
+    margin: 1.5rem 0;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .flashcard::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-3), var(--accent-2));
+  }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 1.5rem 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+  .card-meta .card-tag {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .card-question {
+    flex: 0 0 auto;
+    padding: 1.5rem 2rem;
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--ink);
+    border-bottom: 1px dashed var(--rule);
+  }
+  .card-question .q-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .card-answer {
+    padding: 1.5rem 2rem;
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    flex: 1;
+  }
+  .card-answer.hidden { display: none; }
+  .card-answer .a-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .card-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-deep);
+    border-top: 1px solid var(--rule);
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .nav-controls { display: flex; gap: 0.5rem; }
+  .review-controls { display: flex; gap: 0.5rem; }
+
+  .review-btn {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid;
+    padding: 0.4rem 0.85rem;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.15s;
+    font-weight: 600;
+  }
+  .review-btn.again { border-color: var(--accent); color: var(--accent); }
+  .review-btn.again:hover { background: var(--accent); color: var(--bg-paper); }
+  .review-btn.hard { border-color: var(--accent-3); color: var(--accent-3); }
+  .review-btn.hard:hover { background: var(--accent-3); color: var(--bg-paper); }
+  .review-btn.good { border-color: var(--accent-2); color: var(--accent-2); }
+  .review-btn.good:hover { background: var(--accent-2); color: var(--bg-paper); }
+  .review-btn.easy { border-color: var(--ink); color: var(--ink); }
+  .review-btn.easy:hover { background: var(--ink); color: var(--bg-paper); }
+
+  .nav-btn {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--ink-soft);
+    color: var(--ink-soft);
+    padding: 0.4rem 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { background: var(--ink-soft); color: var(--bg-paper); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .reveal-btn {
+    background: var(--ink);
+    color: var(--bg-paper);
+    border: 1px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+    margin: 1.5rem auto;
+    display: block;
+    font-weight: 600;
+  }
+  .reveal-btn:hover { background: var(--accent); border-color: var(--accent); }
+
+  .how-to {
+    margin-top: 2.5rem;
+    padding: 1.5rem 1.75rem;
+    background: var(--bg-paper);
+    border-left: 3px solid var(--accent-3);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 65ch;
+  }
+  .how-to strong { color: var(--ink); font-family: var(--serif); font-style: italic; font-size: 1rem; }
+  .how-to em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  /* Footer */
+  footer {
+    margin-top: 6rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-mute);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  /* Decorative ornament */
+  .ornament {
+    text-align: center;
+    margin: 3rem 0;
+    color: var(--rule);
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+    background: var(--bg-paper);
+    border: 1px solid var(--rule);
+  }
+  th, td {
+    padding: 0.65rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  th {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: var(--bg-deep);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  td:first-child {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--rule);
+    }
+    .main { padding: 2rem 1.5rem 4rem; }
+    .anki-section { margin: 2rem 0 0; padding-top: 2rem; }
+    h1 { font-size: 2.5rem; }
+  }
+
+  /* Print */
+  @media print {
+    .sidebar, .anki-controls, .card-controls, .reveal-btn { display: none; }
+    .card-answer { display: block !important; }
+    body { background: white; }
+  }
+
+  /* Highlight new card on review */
+  @keyframes flashCard {
+    0% { background: var(--bg-paper); }
+    50% { background: rgba(184,52,29,0.05); }
+    100% { background: var(--bg-paper); }
+  }
+  .flashcard.flash { animation: flashCard 0.5s ease; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">Compendium</div>
+      <div class="brand-sub">Week 1 · Flashcards</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Decks</div>
+      <ul class="nav-list" id="deckNav"></ul>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Companion</div>
+      <a href="notes.html" class="companion-link reverse">
+        <span class="companion-icon">§</span>
+        <span class="companion-text">
+          <strong>Back to Notes</strong>
+          <em>10 modules · figures · proofs</em>
+        </span>
+        <span class="companion-arrow">←</span>
+      </a>
+    </div>
+
+    <div class="progress-card">
+      <h4>Progress</h4>
+      <div class="progress-text" id="progressText">0 / 0 reviewed</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+      <div class="progress-text" id="masteryText">Mastery: —</div>
+    </div>
+
+    <div class="kbd-hints">
+      <div class="nav-label">Keyboard</div>
+      <div class="kbd-row"><kbd>Space</kbd><span>Reveal</span></div>
+      <div class="kbd-row"><kbd>←</kbd><kbd>→</kbd><span>Navigate</span></div>
+      <div class="kbd-row"><kbd>1</kbd><span>Again</span></div>
+      <div class="kbd-row"><kbd>2</kbd><span>Hard</span></div>
+      <div class="kbd-row"><kbd>3</kbd><span>Good</span></div>
+      <div class="kbd-row"><kbd>4</kbd><span>Easy</span></div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <header class="hero">
+      <div class="hero-meta">
+        <span>Week 01</span>
+        <span>Linear Algebra · Foundations</span>
+        <span>51 cards</span>
+      </div>
+      <h1>Recall.<span class="accent">— spaced repetition makes it stick.</span></h1>
+      <p class="lede">Reading is necessary; recall is sufficient. Work through these cards until each one fires in under a few seconds. Rate honestly — the system is only as good as the data you give it.</p>
+    </header>
+
+    <section class="anki-section" id="anki">
+      <div class="anki-header">
+        <div>
+          <div class="module-num">Spaced Repetition</div>
+          <h2 class="anki-title" id="deckTitle">All decks</h2>
+        </div>
+        <div class="anki-controls">
+          <button class="anki-btn" id="shuffleBtn">Shuffle</button>
+          <button class="anki-btn" id="resetBtn">Reset progress</button>
+          <button class="anki-btn primary" id="exportBtn">Export Anki .txt</button>
+        </div>
+      </div>
+
+      <div class="anki-stats">
+        <div class="stat-block">
+          <div class="stat-label">Total</div>
+          <div class="stat-value" id="totalCards">—</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">Reviewed</div>
+          <div class="stat-value" id="reviewedCards">—</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">Mastered</div>
+          <div class="stat-value" id="masteredCards">—</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">Again</div>
+          <div class="stat-value" id="againCards">—</div>
+        </div>
+      </div>
+
+      <div class="deck-tabs" id="deckTabs"></div>
+
+      <div id="cardContainer"></div>
+
+      <div class="how-to">
+        <strong>How to use.</strong> Read the question, pause, answer it in your head, then click <em>Reveal</em>. Rate honestly: <em>Again</em> if you blanked, <em>Hard</em> if you struggled, <em>Good</em> if you got it, <em>Easy</em> if you knew it instantly. Progress is saved locally and survives reloads. Click <em>Export</em> to download a tab-separated file you can drag into Anki desktop.
+      </div>
+    </section>
+
+    <footer>
+      <span>Week 1 · Linear Algebra · Flashcards</span>
+      <a href="notes.html" style="color: var(--accent); text-decoration: none;">← Back to Notes</a>
+    </footer>
+  </main>
+</div>
+
+<script>
+/* ====================== ANKI CARD ENGINE ====================== */
+
+const CARDS = [
+  // ===== Vectors =====
+  { id:'v1', deck:'Vectors', q:'What is a vector in $\\mathbb{R}^n$?',
+    a:'An ordered list of $n$ real numbers. Geometrically: either a point in $n$-dimensional space, or an arrow from the origin to that point. Both views are useful — arrows for geometry, points for data.' },
+  { id:'v2', deck:'Vectors', q:'Define the <em>span</em> of a set of vectors.',
+    a:'The span is the set of all linear combinations $\\alpha_1\\mathbf{v}_1 + \\dots + \\alpha_k\\mathbf{v}_k$. Intuitively: every point you can reach by mixing the vectors. The span is always a linear subspace passing through the origin.' },
+  { id:'v3', deck:'Vectors', q:'When are vectors $\\mathbf{v}_1, \\dots, \\mathbf{v}_k$ <em>linearly independent</em>?',
+    a:'When the only solution to $\\sum \\alpha_i\\mathbf{v}_i = \\mathbf{0}$ is $\\alpha_1 = \\dots = \\alpha_k = 0$. Equivalently: no vector in the set can be written as a linear combination of the others.' },
+  { id:'v4', deck:'Vectors', q:'What is a <em>basis</em>?',
+    a:'A set of vectors that is (1) linearly independent and (2) spans the space. Every vector then has a <em>unique</em> representation as a linear combination of the basis. The standard basis of $\\mathbb{R}^n$ is $\\{\\mathbf{e}_1, \\dots, \\mathbf{e}_n\\}$ where $\\mathbf{e}_i$ has 1 in position $i$ and 0 elsewhere.' },
+  { id:'v5', deck:'Vectors', q:'In ML, why does $\\text{king} - \\text{man} + \\text{woman} \\approx \\text{queen}$ work?',
+    a:'Because vector arithmetic in embedding space combines semantic <em>directions</em>. The vector $\\text{king}-\\text{man}$ approximates the "royalty" direction (gender removed). Adding it to $\\text{woman}$ moves you to the female-royalty point — $\\text{queen}$. It works because the embedding has been trained so semantic axes are roughly linear directions.' },
+
+  // ===== Norms =====
+  { id:'n1', deck:'Norms', q:'Define the $\\ell_2$ norm and the $\\ell_1$ norm.',
+    a:'$\\|\\mathbf{v}\\|_2 = \\sqrt{\\sum_i v_i^2}$ (Euclidean / "as-the-crow-flies" length). $\\|\\mathbf{v}\\|_1 = \\sum_i |v_i|$ (Manhattan / taxicab — sum of absolute components).' },
+  { id:'n2', deck:'Norms', q:'Why does $\\ell_1$ regularization produce sparse solutions while $\\ell_2$ does not?',
+    a:'The $\\ell_1$ unit ball is a diamond — its corners lie on the coordinate axes. When the optimizer shrinks weights toward the origin under an $\\ell_1$ penalty, the optimum often lands at a corner, making some weights exactly zero. The $\\ell_2$ ball is smooth (a sphere), so weights shrink continuously toward zero but rarely hit it.' },
+  { id:'n3', deck:'Norms', q:'How do you normalize a vector to unit length?',
+    a:'$\\hat{\\mathbf{v}} = \\mathbf{v} / \\|\\mathbf{v}\\|_2$. This preserves direction, sets length to 1. Used before cosine similarity, in feature normalization, weight normalization in NNs, etc.' },
+  { id:'n4', deck:'Norms', q:'State the three axioms a function must satisfy to be a norm.',
+    a:'(1) Non-negativity: $\\|\\mathbf{v}\\| \\geq 0$ with equality iff $\\mathbf{v}=\\mathbf{0}$. (2) Absolute homogeneity: $\\|\\alpha\\mathbf{v}\\| = |\\alpha|\\|\\mathbf{v}\\|$. (3) Triangle inequality: $\\|\\mathbf{u}+\\mathbf{v}\\| \\leq \\|\\mathbf{u}\\|+\\|\\mathbf{v}\\|$.' },
+  { id:'n5', deck:'Norms', q:'What is $\\|\\mathbf{v}\\|_\\infty$ and where does it appear in ML?',
+    a:'$\\|\\mathbf{v}\\|_\\infty = \\max_i |v_i|$ — the largest absolute component. Common in adversarial robustness (e.g., "$\\ell_\\infty$ attacks bounded by $\\epsilon$" means each pixel can be perturbed by at most $\\epsilon$).' },
+
+  // ===== Dot Product =====
+  { id:'d1', deck:'Dot Product', q:'Give the two equivalent formulas for $\\mathbf{u}\\cdot\\mathbf{v}$.',
+    a:'<strong>Algebraic:</strong> $\\mathbf{u}\\cdot\\mathbf{v} = \\sum_i u_i v_i = \\mathbf{u}^\\top\\mathbf{v}$. <strong>Geometric:</strong> $\\mathbf{u}\\cdot\\mathbf{v} = \\|\\mathbf{u}\\|\\|\\mathbf{v}\\|\\cos\\theta$. Both produce the same scalar — that they agree is non-trivial.' },
+  { id:'d2', deck:'Dot Product', q:'What does the <em>sign</em> of $\\mathbf{u}\\cdot\\mathbf{v}$ tell you?',
+    a:'It tells you the angle between them: positive ⇒ $\\theta < 90°$ (similar direction); zero ⇒ orthogonal; negative ⇒ $\\theta > 90°$ (opposed). The magnitude depends on lengths too — only the sign is angle-pure.' },
+  { id:'d3', deck:'Dot Product', q:'Define cosine similarity and why it is used in ML retrieval.',
+    a:'$\\cos\\theta = \\frac{\\mathbf{u}\\cdot\\mathbf{v}}{\\|\\mathbf{u}\\|\\|\\mathbf{v}\\|}$, range $[-1,1]$. It measures direction similarity, ignoring magnitude. Standard in retrieval (RAG, semantic search, recommenders) because two documents about the same topic but different lengths still have similar embedding directions.' },
+  { id:'d4', deck:'Dot Product', q:'State Cauchy–Schwarz.',
+    a:'$|\\mathbf{u}\\cdot\\mathbf{v}| \\leq \\|\\mathbf{u}\\|\\|\\mathbf{v}\\|$, with equality iff $\\mathbf{u}$ and $\\mathbf{v}$ are parallel. Direct consequence: $\\cos\\theta$ from the dot-product formula always lies in $[-1,1]$, as it should.' },
+  { id:'d5', deck:'Dot Product', q:'Show that $\\mathbf{v}\\cdot\\mathbf{v} = \\|\\mathbf{v}\\|_2^2$.',
+    a:'$\\mathbf{v}\\cdot\\mathbf{v} = \\sum_i v_i\\cdot v_i = \\sum_i v_i^2 = \\|\\mathbf{v}\\|_2^2$. So squared $\\ell_2$ norm = inner product with itself. This is why squared loss appears so often — it has a clean linear-algebra form $\\mathbf{r}^\\top\\mathbf{r}$.' },
+
+  // ===== Projections =====
+  { id:'p1', deck:'Projections', q:'Write the formula for projecting $\\mathbf{u}$ onto $\\mathbf{v}$.',
+    a:'$\\text{proj}_{\\mathbf{v}}(\\mathbf{u}) = \\frac{\\mathbf{u}\\cdot\\mathbf{v}}{\\mathbf{v}\\cdot\\mathbf{v}}\\,\\mathbf{v} = \\frac{\\mathbf{u}\\cdot\\mathbf{v}}{\\|\\mathbf{v}\\|^2}\\mathbf{v}$. The scalar coefficient says "how much of $\\mathbf{v}$ is in $\\mathbf{u}$"; the result is a vector along $\\mathbf{v}$.' },
+  { id:'p2', deck:'Projections', q:'What property does the residual $\\mathbf{u} - \\text{proj}_{\\mathbf{v}}(\\mathbf{u})$ have?',
+    a:'It is <em>orthogonal</em> to $\\mathbf{v}$. This is the defining property of orthogonal projection: $\\mathbf{u}$ is split into a component along $\\mathbf{v}$ and a component perpendicular to $\\mathbf{v}$.' },
+  { id:'p3', deck:'Projections', q:'Why is projection the right answer to "what point on the line through $\\mathbf{v}$ is closest to $\\mathbf{u}$?"',
+    a:'Among all points on the line, the closest to $\\mathbf{u}$ is where the line from $\\mathbf{u}$ to the line is perpendicular. That foot of the perpendicular is exactly $\\text{proj}_{\\mathbf{v}}(\\mathbf{u})$. This is the geometric reason least-squares works: it projects $\\mathbf{y}$ onto the column space of $X$.' },
+  { id:'p4', deck:'Projections', q:'Name three places projection appears in ML.',
+    a:'(1) Least-squares regression — projecting $\\mathbf{y}$ onto $\\text{col}(X)$. (2) PCA — projecting data onto top-variance directions. (3) Gram–Schmidt — building orthogonal bases by repeatedly subtracting projections. (Bonus: attention scores can be interpreted as soft projections.)' },
+
+  // ===== Matrices =====
+  { id:'m1', deck:'Matrices', q:'Name three "views" of a matrix you should keep simultaneously in mind.',
+    a:'(1) A grid of numbers (literal). (2) A stack of row vectors (often = data samples). (3) A stack of column vectors (often = features, or the building blocks of $A\\mathbf{x}$). Plus a fourth view: $A$ as a linear map $\\mathbb{R}^n\\to\\mathbb{R}^m$.' },
+  { id:'m2', deck:'Matrices', q:'Define a <em>symmetric</em> matrix and give two ML examples.',
+    a:'$A^\\top = A$ (must be square). Examples: <strong>covariance matrix</strong> $\\frac{1}{n-1}X_c^\\top X_c$ — symmetric by construction. <strong>Gram matrix</strong> $A^\\top A$ — entry $(i,j)$ is the dot product of columns $i,j$. Symmetric matrices have real eigenvalues and an orthogonal eigenbasis.' },
+  { id:'m3', deck:'Matrices', q:'Define an <em>orthogonal</em> matrix and what it preserves.',
+    a:'A square matrix $Q$ with $Q^\\top Q = QQ^\\top = I$, so $Q^{-1}=Q^\\top$. Geometrically: rotations and reflections. They preserve the $\\ell_2$ norm: $\\|Q\\mathbf{x}\\|_2 = \\|\\mathbf{x}\\|_2$, and they preserve dot products.' },
+  { id:'m4', deck:'Matrices', q:'For a fully-connected NN layer $\\mathbf{h}=\\sigma(W\\mathbf{x}+\\mathbf{b})$, what is $W$?',
+    a:'$W$ is a matrix of learned weights — concretely, the entire <em>linear function</em> the layer represents (before the nonlinearity). Each row of $W$ is the weight vector for one output unit; equivalently, each column says how a single input feature contributes to all outputs.' },
+
+  // ===== Multiplication =====
+  { id:'mm1', deck:'Multiplication', q:'For $A\\in\\mathbb{R}^{m\\times k}$ and $B\\in\\mathbb{R}^{k\\times n}$, give the formula for $C_{ij}$.',
+    a:'$C_{ij} = \\sum_{p=1}^k A_{ip}\\,B_{pj}$ — the dot product of row $i$ of $A$ with column $j$ of $B$. Inner dimensions $k$ must match; result has shape $m\\times n$.' },
+  { id:'mm2', deck:'Multiplication', q:'Express $A\\mathbf{x}$ as a linear combination.',
+    a:'$A\\mathbf{x} = x_1 A[:,1] + x_2 A[:,2] + \\dots + x_n A[:,n]$ — a linear combination of $A$\'s columns weighted by $\\mathbf{x}$\'s entries. This is <em>the</em> view that makes the column space, rank, and image of $A$ click.' },
+  { id:'mm3', deck:'Multiplication', q:'Give the outer-product view of $AB$.',
+    a:'$AB = \\sum_{p=1}^k A[:,p]\\,B[p,:]$ — sum of $k$ rank-1 outer-product matrices. Each term is a column of $A$ times a row of $B$. This view drives SVD, low-rank approximation, and is how attention is computed.' },
+  { id:'mm4', deck:'Multiplication', q:'Is matrix multiplication commutative? Associative?',
+    a:'Associative: <em>yes</em> — $(AB)C = A(BC)$. Commutative: <em>no</em> — generally $AB \\neq BA$, and they may not even both be defined. (Distributive over addition: yes.)' },
+  { id:'mm5', deck:'Multiplication', q:'In a transformer, what does $QK^\\top$ compute?',
+    a:'A matrix of similarity scores. Row $i$, column $j$ is the dot product of query $i$ with key $j$ — i.e. how strongly token $i$ should attend to token $j$. After scaling by $1/\\sqrt{d_k}$ and softmax, it becomes the attention weights matrix.' },
+
+  // ===== Transpose =====
+  { id:'t1', deck:'Transpose', q:'State the transpose reversal rule.',
+    a:'$(AB)^\\top = B^\\top A^\\top$. The order <em>flips</em>. Same pattern as inverses: $(AB)^{-1} = B^{-1}A^{-1}$. The mnemonic: "socks and shoes" — when undoing, reverse the order.' },
+  { id:'t2', deck:'Transpose', q:'What is a Gram matrix and why is it always symmetric and PSD?',
+    a:'$A^\\top A$. Symmetric: $(A^\\top A)^\\top = A^\\top (A^\\top)^\\top = A^\\top A$. Positive semi-definite: for any $\\mathbf{x}$, $\\mathbf{x}^\\top(A^\\top A)\\mathbf{x} = (A\\mathbf{x})^\\top(A\\mathbf{x}) = \\|A\\mathbf{x}\\|^2 \\geq 0$.' },
+  { id:'t3', deck:'Transpose', q:'In NumPy, what\'s the gotcha with <code>A.T</code>?',
+    a:'It returns a <em>view</em>, not a copy. Cheap and fast, but writing to it mutates the original $A$. Use <code>A.T.copy()</code> when you need an independent copy. Same gotcha for slicing.' },
+
+  // ===== Inverse =====
+  { id:'i1', deck:'Inverse', q:'Define the inverse $A^{-1}$ of a square matrix $A$.',
+    a:'The unique matrix satisfying $AA^{-1} = A^{-1}A = I_n$. It exists iff $A$ is non-singular (full rank, $\\det(A)\\neq 0$, columns are linearly independent, $A\\mathbf{x}=\\mathbf{0}$ implies $\\mathbf{x}=\\mathbf{0}$ — all equivalent).' },
+  { id:'i2', deck:'Inverse', q:'Give five equivalent conditions for invertibility.',
+    a:'(1) $\\det(A)\\neq 0$. (2) Columns of $A$ are linearly independent. (3) Rows of $A$ are linearly independent. (4) $A\\mathbf{x}=\\mathbf{0}$ has only $\\mathbf{x}=\\mathbf{0}$. (5) $0$ is not an eigenvalue. (Bonus: $A$ has full rank $n$.)' },
+  { id:'i3', deck:'Inverse', q:'Why use <code>np.linalg.solve(A,b)</code> instead of <code>np.linalg.inv(A)@b</code>?',
+    a:'<code>solve</code> uses LU decomposition directly — faster ($\\sim$3× fewer flops) and more numerically stable. Computing $A^{-1}$ explicitly amplifies floating-point error and is wasteful when you only need $A^{-1}\\mathbf{b}$, not $A^{-1}$ itself. Rule of thumb: <em>almost never compute an explicit inverse</em>.' },
+  { id:'i4', deck:'Inverse', q:'Give the inverse of a 2×2 matrix $\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}$.',
+    a:'$\\frac{1}{ad-bc}\\begin{bmatrix} d & -b \\\\ -c & a \\end{bmatrix}$, valid when $\\det = ad-bc \\neq 0$. Memorize for back-of-envelope work and whiteboard interviews.' },
+  { id:'i5', deck:'Inverse', q:'What is the Moore–Penrose pseudoinverse, and where does it appear?',
+    a:'$A^+$ generalizes the inverse to non-square or singular matrices. For tall full-rank $A$: $A^+ = (A^\\top A)^{-1}A^\\top$. It appears in least-squares: $\\hat{\\boldsymbol\\beta} = X^+\\mathbf{y} = (X^\\top X)^{-1}X^\\top\\mathbf{y}$ — the closed-form linear regression solution.' },
+  { id:'i6', deck:'Inverse', q:'State the inverse reversal rule.',
+    a:'$(AB)^{-1} = B^{-1}A^{-1}$ — order flips, same as transpose. Quick proof: $(AB)(B^{-1}A^{-1}) = A(BB^{-1})A^{-1} = AIA^{-1} = AA^{-1} = I$.' },
+
+  // ===== Rank · Col · Null =====
+  { id:'r1', deck:'Rank · Col · Null', q:'Define the <em>column space</em> of $A \\in \\mathbb{R}^{m\\times n}$.',
+    a:'$\\text{Col}(A) \\subseteq \\mathbb{R}^m$ is the span of $A$\'s columns — the set of all $A\\mathbf{x}$ as $\\mathbf{x}$ ranges over $\\mathbb{R}^n$. Equivalently: the set of $\\mathbf{b}$ for which $A\\mathbf{x}=\\mathbf{b}$ has at least one solution. Also called the <em>image</em> or <em>range</em> of $A$.' },
+  { id:'r2', deck:'Rank · Col · Null', q:'Define the <em>null space</em> of $A$.',
+    a:'$\\text{Null}(A) = \\{\\mathbf{x} \\in \\mathbb{R}^n : A\\mathbf{x}=\\mathbf{0}\\}$ — every input that $A$ crushes to zero. Also called the <em>kernel</em>, $\\ker(A)$. It is always a subspace of the input space (closed under addition and scaling).' },
+  { id:'r3', deck:'Rank · Col · Null', q:'Define <em>rank</em> three equivalent ways.',
+    a:'$\\text{rank}(A)$ equals: (1) $\\dim(\\text{Col}(A))$ — dimension of the column space; (2) $\\dim(\\text{Row}(A))$ — column rank equals row rank; (3) the number of linearly independent columns (equivalently, rows). Always satisfies $\\text{rank}(A) \\leq \\min(m,n)$.' },
+  { id:'r4', deck:'Rank · Col · Null', q:'State the rank–nullity theorem.',
+    a:'For $A \\in \\mathbb{R}^{m\\times n}$: $\\text{rank}(A) + \\dim(\\text{Null}(A)) = n$. Intuition: every input dimension either survives ($\\to$ rank) or is crushed ($\\to$ nullity); they must add up to the total input dimension $n$.' },
+  { id:'r5', deck:'Rank · Col · Null', q:'For a square $A \\in \\mathbb{R}^{n\\times n}$, list four equivalent conditions to "$A$ is invertible" using rank, column space, and null space.',
+    a:'(1) $\\text{rank}(A) = n$ (full rank). (2) $\\text{Null}(A) = \\{\\mathbf{0}\\}$ (trivial null space). (3) $\\text{Col}(A) = \\mathbb{R}^n$ (columns span the output space). (4) Columns are linearly independent. (Bonus: $\\det(A)\\neq 0$, $0$ is not an eigenvalue.)' },
+  { id:'r6', deck:'Rank · Col · Null', q:'What is the rank of $A=\\begin{bmatrix} 1 & 2 & 3 \\\\ 2 & 4 & 6 \\end{bmatrix}$, and the dimension of its null space?',
+    a:'$\\text{rank}(A)=1$ — row 2 is $2\\times$ row 1, so all rows lie in a 1D line. By rank–nullity with $n=3$: $\\dim(\\text{Null}(A)) = 3 - 1 = 2$. Two independent vectors in the null space: $(2,-1,0)^\\top$ and $(3,0,-1)^\\top$.' },
+  { id:'r7', deck:'Rank · Col · Null', q:'In ML, why is "low rank" a useful property of weight matrices?',
+    a:'Real data matrices and well-trained weight matrices are often approximately low-rank — most signal lies in a few dominant directions. This is exploited by: PCA (top-$k$ eigendirections), SVD truncation (image/data compression), LoRA (training only a low-rank update $\\Delta W = BA$ instead of full $W$), and matrix-factorization recommenders (user $\\times$ item factored as low-rank).' },
+
+  // ===== Solving Ax=b =====
+  { id:'s1', deck:'Solving Ax=b', q:'Name the three possible behaviors of $A\\mathbf{x}=\\mathbf{b}$ and the geometric condition for each.',
+    a:'<strong>Unique:</strong> $\\mathbf{b}\\in\\text{Col}(A)$ <em>and</em> $\\text{Null}(A)=\\{\\mathbf{0}\\}$. <strong>Infinite:</strong> $\\mathbf{b}\\in\\text{Col}(A)$ <em>and</em> $\\text{Null}(A)\\neq\\{\\mathbf{0}\\}$. <strong>None:</strong> $\\mathbf{b}\\notin\\text{Col}(A)$. Tested algebraically by comparing $\\text{rank}(A)$ to $\\text{rank}([A\\mid\\mathbf{b}])$.' },
+  { id:'s2', deck:'Solving Ax=b', q:'Express the general solution to $A\\mathbf{x}=\\mathbf{b}$ when one exists.',
+    a:'$\\mathbf{x} = \\mathbf{x}_p + \\mathbf{x}_h$ where $\\mathbf{x}_p$ is any particular solution ($A\\mathbf{x}_p = \\mathbf{b}$) and $\\mathbf{x}_h \\in \\text{Null}(A)$ is any homogeneous solution. If $\\text{Null}(A) = \\{\\mathbf{0}\\}$, then $\\mathbf{x}_p$ is the only solution.' },
+  { id:'s3', deck:'Solving Ax=b', q:'What is LU decomposition, and why factor instead of just doing Gaussian elimination?',
+    a:'$A = LU$ where $L$ is lower triangular and $U$ is upper triangular (with partial pivoting: $PA=LU$). Once factored, solving $A\\mathbf{x}=\\mathbf{b}$ is two cheap triangular solves: forward-solve $L\\mathbf{y}=\\mathbf{b}$, then back-solve $U\\mathbf{x}=\\mathbf{y}$, each $O(n^2)$. Factor once, reuse for many right-hand sides.' },
+  { id:'s4', deck:'Solving Ax=b', q:'Cost of solving $A\\mathbf{x}=\\mathbf{b}$ via LU vs. computing $A^{-1}$ explicitly?',
+    a:'<strong>LU + solve:</strong> $O(n^3)$ for the factorization, then $O(n^2)$ per right-hand side. <strong>Explicit $A^{-1}$:</strong> also $O(n^3)$ but ~3× the work, and amplifies floating-point error. For $A^{-1}\\mathbf{b}$ when you only need the product, always use a solver, not an inverse.' },
+  { id:'s5', deck:'Solving Ax=b', q:'Why is <code>np.linalg.solve(A, b)</code> preferred over <code>np.linalg.inv(A) @ b</code>?',
+    a:'<code>solve</code> uses LU directly with partial pivoting — fewer flops (~3× less work) and far better numerical stability. <code>inv</code> wastes effort computing the full $A^{-1}$ when only $A^{-1}\\mathbf{b}$ is needed, and floating-point errors compound through the explicit inverse. For multiple RHS: <code>scipy.linalg.lu_factor</code> once, then <code>lu_solve</code> per $\\mathbf{b}$.' },
+  { id:'s6', deck:'Solving Ax=b', q:'Give Big-O costs for: (1) matrix–vector $A\\mathbf{x}$, (2) matrix–matrix $AB$, (3) LU factor, (4) triangular solve, (5) compute $A^{-1}$.',
+    a:'(1) $O(n^2)$ — $n^2$ multiply-adds. (2) $O(n^3)$ — three nested loops; Strassen reaches $O(n^{2.81})$. (3) $O(n^3)$ — dominant cost of solving. (4) $O(n^2)$ — per right-hand side, after factoring. (5) $O(n^3)$ — same order as LU but ~3× more flops in practice.' },
+  { id:'s7', deck:'Solving Ax=b', q:'For a non-square or rank-deficient $A$, how do you "solve" $A\\mathbf{x}=\\mathbf{b}$?',
+    a:'No exact solution generally exists; solve the <em>least-squares</em> problem $\\min_{\\mathbf{x}}\\|A\\mathbf{x}-\\mathbf{b}\\|_2^2$ instead. Solution: $\\hat{\\mathbf{x}} = A^+\\mathbf{b}$. Numerically, prefer QR decomposition (full-rank tall) or SVD (rank-deficient); avoid forming the normal equations $(A^\\top A)^{-1}A^\\top \\mathbf{b}$ — they square the condition number.' }
+];
+
+const STORAGE_KEY = 'gprep_w1_linalg';
+
+let state = loadState();
+let currentDeck = 'All';
+let currentIdx = 0;
+let revealed = false;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) throw 0;
+    return JSON.parse(raw);
+  } catch {
+    return { progress: {}, lastSeen: 0 };
+  }
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+
+function getDecks() {
+  const set = new Set(CARDS.map(c=>c.deck));
+  return ['All', ...set];
+}
+
+function filteredCards() {
+  return currentDeck === 'All' ? CARDS : CARDS.filter(c=>c.deck===currentDeck);
+}
+
+function renderTabs() {
+  const wrap = document.getElementById('deckTabs');
+  wrap.innerHTML = '';
+  getDecks().forEach(d=>{
+    const btn = document.createElement('button');
+    btn.className = 'deck-tab' + (d===currentDeck?' active':'');
+    const count = d==='All'?CARDS.length:CARDS.filter(c=>c.deck===d).length;
+    btn.innerHTML = `${d} <span class="count">${count}</span>`;
+    btn.onclick = ()=>{ currentDeck = d; currentIdx = 0; revealed = false; renderTabs(); renderCard(); };
+    wrap.appendChild(btn);
+  });
+  // Also render sidebar deck nav
+  const nav = document.getElementById('deckNav');
+  if (nav) {
+    nav.innerHTML = '';
+    getDecks().forEach(d=>{
+      const li = document.createElement('li');
+      li.className = 'deck-nav-item' + (d===currentDeck?' active':'');
+      li.style.padding = '0';
+      li.style.borderBottom = 'none';
+      const count = d==='All'?CARDS.length:CARDS.filter(c=>c.deck===d).length;
+      li.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.6rem;margin:0 -0.6rem;width:calc(100% + 1.2rem);cursor:pointer;border-bottom:1px dotted var(--rule-soft);${d===currentDeck?'background:var(--ink);color:var(--bg-paper);font-weight:600;':'color:var(--ink-soft);'}">
+          <span style="flex:1;">${d}</span>
+          <span style="font-family:var(--mono);font-size:0.65rem;background:${d===currentDeck?'var(--bg-paper)':'var(--bg-deep)'};color:${d===currentDeck?'var(--ink)':'var(--ink-mute)'};padding:0.1rem 0.45rem;border-radius:2px;">${count}</span>
+        </div>`;
+      li.onclick = ()=>{ currentDeck = d; currentIdx = 0; revealed = false; renderTabs(); renderCard(); };
+      nav.appendChild(li);
+    });
+  }
+  // Update title
+  const t = document.getElementById('deckTitle');
+  if (t) t.textContent = currentDeck === 'All' ? 'All decks' : currentDeck;
+}
+
+function renderCard() {
+  const cards = filteredCards();
+  if (cards.length === 0) {
+    document.getElementById('cardContainer').innerHTML = '<p style="text-align:center;padding:3rem;font-style:italic;color:var(--ink-mute);">No cards in this deck.</p>';
+    return;
+  }
+  const card = cards[currentIdx % cards.length];
+  const prog = state.progress[card.id] || { seen: 0, again: 0, mastered: false };
+
+  const html = `
+    <div class="flashcard" id="activeCard">
+      <div class="card-meta">
+        <span>Card ${currentIdx+1} of ${cards.length}</span>
+        <span class="card-tag">${card.deck}</span>
+        <span>Seen: ${prog.seen} · Again: ${prog.again}${prog.mastered?' · ★ Mastered':''}</span>
+      </div>
+      <div class="card-question">
+        <span class="q-label">Question</span>
+        ${card.q}
+      </div>
+      <div class="card-answer ${revealed?'':'hidden'}" id="cardAnswer">
+        <span class="a-label">Answer</span>
+        ${card.a}
+      </div>
+      ${!revealed ? `<button class="reveal-btn" id="revealBtn">Reveal answer</button>` : ''}
+      <div class="card-controls">
+        <div class="nav-controls">
+          <button class="nav-btn" id="prevBtn">← Prev</button>
+          <button class="nav-btn" id="nextBtn">Next →</button>
+        </div>
+        <div class="review-controls" id="reviewControls" style="${revealed?'':'visibility:hidden;'}">
+          <button class="review-btn again" data-rate="again">Again</button>
+          <button class="review-btn hard" data-rate="hard">Hard</button>
+          <button class="review-btn good" data-rate="good">Good</button>
+          <button class="review-btn easy" data-rate="easy">Easy</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('cardContainer').innerHTML = html;
+
+  // Re-render math
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([document.getElementById('activeCard')]).catch(()=>{});
+  }
+
+  // Wire up
+  const reveal = document.getElementById('revealBtn');
+  if (reveal) reveal.onclick = ()=>{ revealed = true; renderCard(); };
+  document.getElementById('prevBtn').onclick = ()=>{ currentIdx = (currentIdx - 1 + cards.length) % cards.length; revealed = false; renderCard(); };
+  document.getElementById('nextBtn').onclick = ()=>{ currentIdx = (currentIdx + 1) % cards.length; revealed = false; renderCard(); };
+  document.querySelectorAll('.review-btn').forEach(b=>{
+    b.onclick = ()=>rateCard(card.id, b.dataset.rate);
+  });
+  updateStats();
+}
+
+function rateCard(id, rating) {
+  const p = state.progress[id] || { seen:0, again:0, mastered:false, lastRating:null };
+  p.seen += 1;
+  p.lastRating = rating;
+  if (rating === 'again') { p.again += 1; p.mastered = false; }
+  if (rating === 'good' || rating === 'easy') {
+    if (p.again === 0 && p.seen >= 1) p.mastered = true;
+    if (rating === 'easy') p.mastered = true;
+  }
+  state.progress[id] = p;
+  saveState();
+  // advance
+  const cards = filteredCards();
+  currentIdx = (currentIdx + 1) % cards.length;
+  revealed = false;
+  renderCard();
+}
+
+function updateStats() {
+  const total = CARDS.length;
+  const reviewed = Object.values(state.progress).filter(p=>p.seen>0).length;
+  const mastered = Object.values(state.progress).filter(p=>p.mastered).length;
+  const again = Object.values(state.progress).reduce((s,p)=>s+(p.again||0),0);
+  document.getElementById('totalCards').textContent = total;
+  document.getElementById('reviewedCards').textContent = reviewed;
+  document.getElementById('masteredCards').textContent = mastered;
+  document.getElementById('againCards').textContent = again;
+  // Sidebar progress
+  const pct = total ? Math.round(100 * reviewed / total) : 0;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressText').textContent = `${reviewed} / ${total} cards reviewed`;
+  document.getElementById('masteryText').textContent = `Mastery: ${mastered}/${total} (${total?Math.round(100*mastered/total):0}%)`;
+}
+
+function shuffleDeck() {
+  // Fisher-Yates on a copy of indices we render from
+  // Simplest: shuffle CARDS in place
+  for (let i = CARDS.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [CARDS[i], CARDS[j]] = [CARDS[j], CARDS[i]];
+  }
+  currentIdx = 0; revealed = false; renderCard();
+}
+
+function resetProgress() {
+  if (!confirm('Reset all flashcard progress for Week 1? This cannot be undone.')) return;
+  state = { progress: {}, lastSeen: 0 };
+  saveState();
+  renderCard();
+}
+
+function exportAnki() {
+  // Anki accepts tab-separated: front<TAB>back<TAB>tags
+  // Strip MathJax delimiters? No — Anki with MathJax addon supports them; also Anki natively renders \( \) with built-in MathJax recently.
+  const lines = CARDS.map(c => {
+    const front = c.q.replace(/\t/g,' ').replace(/\n/g,' ');
+    const back  = c.a.replace(/\t/g,' ').replace(/\n/g,' ');
+    const tags = `LinearAlgebra Week1 ${c.deck.replace(/\s+/g,'_')}`;
+    return `${front}\t${back}\t${tags}`;
+  });
+  const header = '#separator:tab\n#html:true\n#tags column:3\n';
+  const blob = new Blob([header + lines.join('\n')], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'gprep_week1_linalg_anki.txt';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('shuffleBtn').onclick = shuffleDeck;
+document.getElementById('resetBtn').onclick = resetProgress;
+document.getElementById('exportBtn').onclick = exportAnki;
+
+// keyboard nav
+document.addEventListener('keydown', (e)=>{
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  // only when anki section visible-ish (always allow)
+  if (e.key === ' ' || e.key === 'Enter') {
+    if (!revealed) { revealed = true; renderCard(); e.preventDefault(); }
+  } else if (e.key === 'ArrowRight') {
+    const cards = filteredCards();
+    currentIdx = (currentIdx + 1) % cards.length; revealed = false; renderCard();
+  } else if (e.key === 'ArrowLeft') {
+    const cards = filteredCards();
+    currentIdx = (currentIdx - 1 + cards.length) % cards.length; revealed = false; renderCard();
+  } else if (e.key === '1') rateCard(filteredCards()[currentIdx % filteredCards().length].id, 'again');
+  else if (e.key === '2') rateCard(filteredCards()[currentIdx % filteredCards().length].id, 'hard');
+  else if (e.key === '3') rateCard(filteredCards()[currentIdx % filteredCards().length].id, 'good');
+  else if (e.key === '4') rateCard(filteredCards()[currentIdx % filteredCards().length].id, 'easy');
+});
+
+// Init
+renderTabs();
+renderCard();
+updateStats();
+</script>
+</body>
+</html>
